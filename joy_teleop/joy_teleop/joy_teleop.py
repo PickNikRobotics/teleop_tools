@@ -75,13 +75,16 @@ def set_member(msg: typing.Any, member: str, value: typing.Any) -> None:
 class JoyTeleopCommand:
 
     def __init__(self, name: str, config: typing.Dict[str, typing.Any],
-                 button_name: str, axes_name: str) -> None:
+                 button_name: str, axes_name: str, toggle_buttons: str) -> None:
         self.buttons: typing.List[str] = []
+        self.toggle_buttons: typing.List[str] = []
         if button_name in config:
             self.buttons = config[button_name]
         self.axes: typing.List[str] = []
         if axes_name in config:
             self.axes = config[axes_name]
+        if toggle_buttons in config:
+            self.toggle_buttons = config[toggle_buttons]
 
         if len(self.buttons) == 0 and len(self.axes) == 0:
             raise JoyTeleopException("No buttons or axes configured for command '{}'".format(name))
@@ -127,7 +130,23 @@ class JoyTeleopCommand:
 class JoyTeleopTopicCommand(JoyTeleopCommand):
 
     def __init__(self, name: str, config: typing.Dict[str, typing.Any], node: Node) -> None:
-        super().__init__(name, config, 'deadman_buttons', 'deadman_axes')
+        super().__init__(name, config, 'deadman_buttons', 'deadman_axes', 'toggle_buttons')
+
+        node.get_logger().error("Toggle buttons?")
+        node.get_logger().error("Toggle buttons?")
+        node.get_logger().error("Toggle buttons?")
+        node.get_logger().error("Toggle buttons?")
+        node.get_logger().error("Toggle buttons?")
+        node.get_logger().error(self.toggle_buttons)
+        node.get_logger().error(self.toggle_buttons)
+        node.get_logger().error(self.toggle_buttons)
+        node.get_logger().error(self.toggle_buttons)
+        node.get_logger().error(self.toggle_buttons)
+        node.get_logger().error(self.toggle_buttons)
+        node.get_logger().error(self.toggle_buttons)
+
+
+
 
         self.name = name
 
@@ -245,7 +264,7 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
 class JoyTeleopServiceCommand(JoyTeleopCommand):
 
     def __init__(self, name: str, config: typing.Dict[str, typing.Any], node: Node) -> None:
-        super().__init__(name, config, 'buttons', 'axes')
+        super().__init__(name, config, 'buttons', 'axes', 'toggle_buttons')
 
         self.name = name
 
@@ -294,7 +313,7 @@ class JoyTeleopServiceCommand(JoyTeleopCommand):
 class JoyTeleopActionCommand(JoyTeleopCommand):
 
     def __init__(self, name: str, config: typing.Dict[str, typing.Any], node: Node) -> None:
-        super().__init__(name, config, 'buttons', 'axes')
+        super().__init__(name, config, 'buttons', 'axes', 'toggle_buttons')
 
         self.name = name
 
