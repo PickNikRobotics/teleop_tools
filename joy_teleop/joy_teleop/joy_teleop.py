@@ -139,8 +139,6 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
         self.toggle_buttons = []
         if 'toggle_buttons' in config:
             self.toggle_buttons = config['toggle_buttons']
-            node.get_logger().info(str("TOGGLE BUTTON IS CONFIGURED!"))
-
 
         # A 'message_value' is a fixed message that is sent in response to an activation.  It is
         # mutually exclusive with an 'axis_mapping'.
@@ -209,10 +207,9 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
             return
 
         # Check toggle status for this command
-        for toggle_buttons in self.toggle_buttons:
-            # TODO: check if current buttons match any of toggle_buttons
-            #node.get_logger().info(str(self.toggle_buttons[0]))
-            node.get_logger().info("TOGGLED!")
+        for toggle_button in self.toggle_buttons:
+            if joy_state.buttons[int(toggle_button)]:
+                node.get_logger().info("TOGGLED!")
 
         if self.msg_value is not None:
             # This is the case for a static message.
