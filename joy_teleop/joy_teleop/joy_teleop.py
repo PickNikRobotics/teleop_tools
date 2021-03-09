@@ -142,6 +142,8 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
         if 'toggle_buttons' in config:
             self.toggle_buttons = config['toggle_buttons']
         self.toggle_enabled = True
+        # Need 2 rising or falling edges for a change in toggle state (button pressed and released)
+        self.toggle_press_count = 0
 
         # For this control mode, self.buttons are deadman_buttons
         self.have_deadman = False
@@ -220,8 +222,11 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
         if len(self.prev_joy_state.buttons) > 0:
             for toggle_button in self.toggle_buttons:
                 if joy_state.buttons[int(toggle_button)] != self.prev_joy_state.buttons[toggle_button]:
-                    #TODO: need 2 edge changes to count a change in toggle state (button pressed and released)
-                    self.toggle_enabled = not self.toggle_enabled
+                    # Need 2 rising or falling edges for a change in toggle state (button pressed and released)
+                    self.toggle_press_count = self.toggle_press_count + 1
+                    if self.toggle_press_count == 2:
+                        self.toggle_enabled = not self.toggle_enabled
+                        self.toggle_press_count = 0
         self.prev_joy_state = joy_state
         if not self.toggle_enabled:
             node.get_logger().info("RETURNING DUE TO TOGGLE")
