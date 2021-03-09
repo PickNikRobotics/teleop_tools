@@ -141,6 +141,7 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
         self.toggle_buttons = []
         if 'toggle_buttons' in config:
             self.toggle_buttons = config['toggle_buttons']
+        self.toggle_enabled = True
 
         # For this control mode, self.buttons are deadman_buttons
         self.have_deadman = False
@@ -211,7 +212,6 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
         # This is where the return due to deadman switch happens
         if self.have_deadman:
             if not self.active:
-                node.get_logger().info(str("RETURNING"))
                 return
         if self.msg_value is not None and last_active == self.active:
             return
@@ -220,8 +220,12 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
         if len(self.prev_joy_state.buttons) > 0:
             for toggle_button in self.toggle_buttons:
                 if joy_state.buttons[int(toggle_button)] != self.prev_joy_state.buttons[toggle_button]:
-                    node.get_logger().info("TOGGLED!")
+                    #TODO: need 2 edge changes to count a change in toggle state (button pressed and released)
+                    self.toggle_enabled = not self.toggle_enabled
         self.prev_joy_state = joy_state
+        if not self.toggle_enabled:
+            node.get_logger().info("RETURNING DUE TO TOGGLE")
+            return
 
         if self.msg_value is not None:
             # This is the case for a static message.
