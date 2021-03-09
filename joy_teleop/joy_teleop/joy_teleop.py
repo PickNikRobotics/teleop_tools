@@ -132,25 +132,15 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
     def __init__(self, name: str, config: typing.Dict[str, typing.Any], node: Node) -> None:
         super().__init__(name, config, 'deadman_buttons', 'deadman_axes', 'toggle_buttons')
 
-        node.get_logger().error("Toggle buttons?")
-        node.get_logger().error("Toggle buttons?")
-        node.get_logger().error("Toggle buttons?")
-        node.get_logger().error("Toggle buttons?")
-        node.get_logger().error("Toggle buttons?")
-        node.get_logger().error(self.toggle_buttons)
-        node.get_logger().error(self.toggle_buttons)
-        node.get_logger().error(self.toggle_buttons)
-        node.get_logger().error(self.toggle_buttons)
-        node.get_logger().error(self.toggle_buttons)
-        node.get_logger().error(self.toggle_buttons)
-        node.get_logger().error(self.toggle_buttons)
-
-
-
-
         self.name = name
 
         self.topic_type = get_interface_type(config['interface_type'], 'msg')
+
+        self.toggle_buttons = []
+        if 'toggle_buttons' in config:
+            self.toggle_buttons = config['toggle_buttons']
+            node.get_logger().info(str("TOGGLE BUTTON IS CONFIGURED!"))
+
 
         # A 'message_value' is a fixed message that is sent in response to an activation.  It is
         # mutually exclusive with an 'axis_mapping'.
@@ -217,6 +207,12 @@ class JoyTeleopTopicCommand(JoyTeleopCommand):
             return
         if self.msg_value is not None and last_active == self.active:
             return
+
+        # Check toggle status for this command
+        for toggle_buttons in self.toggle_buttons:
+            # TODO: check if current buttons match any of toggle_buttons
+            #node.get_logger().info(str(self.toggle_buttons[0]))
+            node.get_logger().info("TOGGLED!")
 
         if self.msg_value is not None:
             # This is the case for a static message.
